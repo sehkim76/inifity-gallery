@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import Spinner from 'react-bootstrap/Spinner';
 
 const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
   const [imageUrls, setImageUrls] = useState([]);
@@ -111,7 +112,12 @@ const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
           ))}
         </div>
 
-        {loading && <p>Loading...</p>}
+        {loading && (
+          <div>
+          <p>Loading...</p><Spinner animation="border" />
+          </div>
+          )
+        }
         {!hasMore && <p>No more data</p>}
 
     </div>
