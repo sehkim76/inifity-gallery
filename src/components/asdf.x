@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 
-const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
+const InfinityScroll = ({ fetchData }) => {
   const [imageUrls, setImageUrls] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -8,24 +8,29 @@ const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
   
   const [selectedImage, setSelectedImage] = useState(null);
 
-
-  const contentRef = useRef(null);
+  const scrollableContentRef = useRef(null);
 
   const handleImageClick = (imageUrl) => {
     setSelectedImage(imageUrl);
   };
 
+  const handleScroll = () => {
+    const scrollableContent = scrollableContentRef.current;
+    if (!scrollableContent) return;
 
-  
+    const { clientHeight, scrollTop, scrollHeight } = scrollableContent;
+
+    console.log(`handleScroll() clientHeight[${clientHeight}] scrollTop[${scrollTop}] scrollHeight[${scrollHeight}] loading[${loading}] hasMore[${hasMore}]`);
+
+    if (clientHeight + scrollTop < scrollHeight - 5 || loading) return;
+
+    console.log(`handleScroll() setLoading(true)`);
+    setLoading(true);
+  };
 
   useEffect(() => {
-    const scrollableContent = scrollableContentRef.current;
-    const content = contentRef.current;
-
-    console.log(`loading[${loading}] page[${page}] `);
-    console.log(contentRef);
-    //if (!loading && content.clientHeight == 0 ) return;
-    if (!loading ) return;
+    console.log(`loading[${loading}] page[${page}]`);
+    if (!loading) return;
 
     fetchData(page)
       .then((newData) => {
@@ -35,11 +40,11 @@ const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
           setHasMore(true);
           setPage((prevPage) => prevPage + 1);
 
+          const scrollableContent = scrollableContentRef.current;
+          if (scrollableContent) {
+            console.log(`scrollableContent.clientHeight[${scrollableContent.clientHeight}] scrollableContent.scrollTop[${scrollableContent.scrollTop}] scrollableContent.scrollHeight[${scrollableContent.scrollHeight}]`);
 
-          if (scrollableContent && content) {
-            console.log(`content.clientHeight[${content.clientHeight}][${content.scrollHeight}] scrollableContent.scrollTop[${scrollableContent.scrollTop}] scrollableContent.scrollHeight[${scrollableContent.scrollHeight}]`);
-
-            if (content.clientHeight + scrollableContent.scrollTop + 50 > scrollableContent.clientHeight && content.clientHeight != 0) {
+            if (scrollableContent.clientHeight + scrollableContent.scrollTop <= scrollableContent.scrollHeight + 5) {
               console.log(`SetLoading to false`);
               setLoading(false);
             }
@@ -55,35 +60,22 @@ const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
         console.error('error fetching data:', error);
         setLoading(false);
       });
-  }, [loading, page, hasMore, scrollableContentRef, contentRef, fetchData, imageUrls]);
+  }, [loading, page, fetchData, imageUrls]);
 
   useEffect(() => {
-    const scrollableContent = scrollableContentRef.current;
-    const content = contentRef.current;
-  
-    if (!scrollableContent || !content) return;
-  
-    const handleScroll = () => {
-      const { clientHeight, scrollTop, scrollHeight } = scrollableContent;
-      const contentClientHeight = content.clientHeight;
-  
-      console.log(`handleScroll() clientHeight[${clientHeight}] contentClientHeight[${contentClientHeight}] scrollTop[${scrollTop}] scrollHeight[${scrollHeight}] loading[${loading}] hasMore[${hasMore}]`);
-  
-      if (contentClientHeight + scrollTop < scrollHeight - 5 || loading) return;
-  
-      console.log(`handleScroll() setLoading(true)`);
-      setLoading(true);
-    };
-  
     console.log(`handleScroll() registering`);
-    scrollableContent.addEventListener('scroll', handleScroll);
-  
+    const scrollableContent = scrollableContentRef.current;
+    if (scrollableContent) {
+      scrollableContent.addEventListener('scroll', handleScroll);
+    }
+
     return () => {
       console.log(`handleScroll() deregistering`);
-      scrollableContent.removeEventListener('scroll', handleScroll);
+      if (scrollableContent) {
+        scrollableContent.removeEventListener('scroll', handleScroll);
+      }
     };
-  }, [loading, hasMore, scrollableContentRef, contentRef]);
-  
+  }, [handleScroll]);
 
   return (
     <div>
@@ -95,8 +87,8 @@ const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
           </div>
         </div>
       )}
-
-        <div className="gallery-grid" ref={contentRef}>
+      <div className="scrollable-content" ref={scrollableContentRef}>
+        <div className="gallery-grid">
           {imageUrls.map((image, index) => (
             <div key={`selected${index}`}>
               <img
@@ -113,7 +105,7 @@ const InfinityScroll = ({ fetchData, scrollableContentRef }) => {
 
         {loading && <p>Loading...</p>}
         {!hasMore && <p>No more data</p>}
-
+      </div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  
 }
 
 .App-logo {
@@ -28,6 +29,7 @@
   color: #61dafb;
 }
 .gallery-grid {
+  border:#61dafb solid 10px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px; /* 이미지 사이의 간격을 조절할 수 있습니다. */

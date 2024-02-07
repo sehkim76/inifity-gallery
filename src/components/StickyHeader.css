@@ -3,7 +3,9 @@
 .sticky-container {
     display: flex;
     flex-direction: column;
+
     height: 100vh; /* 100% 뷰포트 높이 */
+    border: rgb(56, 20, 164) 2px solid;
   }
   
   .sticky-header {
@@ -15,8 +17,18 @@
   }
   
   .scrollable-content {
+    border: red 2px solid;
     flex: 1; /* 남은 공간을 채우도록 설정 */
     overflow-y: auto; /* 세로 스크롤을 허용 */
     padding: 16px;
+  }
+  
+    
+  .scrollable-content-inside {
+    border: green solid;
+    flex: 1; /* 남은 공간을 채우도록 설정 */
+    overflow-y: auto; /* 세로 스크롤을 허용 */
+    height: 100vh; /* 100% 뷰포트 높이 */
+
   }
   
