@@ -1,0 +1,22 @@
+/* StickyHeader.css */
+
+.sticky-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* 100% 뷰포트 높이 */
+  }
+  
+  .sticky-header {
+    background-color: #f1f1f1;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100; /* 다른 요소 위에 나타나도록 설정 */
+  }
+  
+  .scrollable-content {
+    flex: 1; /* 남은 공간을 채우도록 설정 */
+    overflow-y: auto; /* 세로 스크롤을 허용 */
+    padding: 16px;
+  }
+  
